@@ -1,7 +1,0 @@
-// Sample API input data 
-(['TRANSACTION_ID', 'TX_DATETIME', 'CUSTOMER_ID', 'TERMINAL_ID',
-       'TX_AMOUNT', 'TX_TIME_SECONDS', 'TX_TIME_DAYS', 'TX_FRAUD',
-       'TX_FRAUD_SCENARIO'],
-      dtype='object')
-
-// Required parsed data 
