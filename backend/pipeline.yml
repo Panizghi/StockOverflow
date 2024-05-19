@@ -1,0 +1,109 @@
+stages:
+  - name: Setup Database Schema
+  - name: Fetch Public Keys
+  - name: Generate and Store Mock Data
+  - name: Train Models
+  - name: Evaluate Models
+  - name: Update Watcher List Database
+  - name: Update UI
+  - name: Deploy
+
+webhooks:
+  - name: New Data Fetch
+    events:
+      - data_fetched
+    jobs:
+      - Setup Database Schema
+      - Fetch Public Keys
+      - Generate and Store Mock Data
+      - Train Models
+      - Evaluate Models
+      - Update UI
+      - Deploy
+
+  - name: Watcher List Update
+    events:
+      - watcher_list_updated
+    jobs:
+      - Setup Database Schema
+      - Fetch Public Keys
+      - Update Watcher List Database
+      - Update UI
+      - Deploy
+
+  - name: Fraud Detection
+    events:
+      - fraud_detected
+    jobs:
+      - Setup Database Schema
+      - Fetch Public Keys
+      - Train Models
+      - Evaluate Models
+      - Update UI
+      - Deploy
+
+steps:
+  - name: Setup Database Schema
+    image: postgres:latest
+    script:
+      - psql -U user -h host -d dbname -f path/to/schema.sql
+
+  - name: Fetch Public Keys
+    image: python:3.8
+    script:
+      - python fetch_public_keys.py
+    artifacts:
+      paths:
+        - public_keys/
+
+  - name: Generate and Store Mock Data
+    image: python:3.8
+    script:
+      - python generate_mock_data.py --public-keys public_keys.txt --dbname near_indexer --user user --password password --host localhost
+    artifacts:
+      paths:
+        - mock_data/
+
+  - name: Train Regression Model
+    image: python:3.8
+    script:
+      - python train_regression_model.py --data-path mock_data/
+    artifacts:
+      paths:
+        - models/regression_model/
+
+  - name: Train XGBoost Model
+    image: python:3.8
+    script:
+      - python train_xgboost_model.py --data-path mock_data/
+    artifacts:
+      paths:
+        - models/xgboost_model/
+
+  - name: Evaluate Models
+    image: python:3.8
+    script:
+      - python evaluate_models.py --regression-model models/regression_model/ --xgboost-model models/xgboost_model/
+    artifacts:
+      paths:
+        - evaluation_results/
+
+  - name: Update Watcher List Database
+    image: python:3.8
+    script:
+      - python update_watcher_list_db.py --public-keys public_keys/public_keys.txt --evaluation-results evaluation_results/
+
+  - name: Update UI
+    image: node:14
+    script:
+      - npm install
+      - npm run build
+      - python update_ui.py --evaluation-results evaluation_results/
+    artifacts:
+      paths:
+        - ui_build/
+
+  - name: Deploy
+    image: deployer:latest
+    script:
+      - deploy --source ui_build/ --target production
