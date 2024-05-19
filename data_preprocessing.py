@@ -5,7 +5,7 @@ import os
 
 
 # Load data
-data_df = pd.read_csv("https://github.com/nsethi31/Kaggle-Data-Credit-Card-Fraud-Detection/blob/master/creditcard.csv")
+data_df = pd.read_csv("https://raw.githubusercontent.com/nsethi31/Kaggle-Data-Credit-Card-Fraud-Detection/master/creditcard.csv")
 print("Credit Card Fraud Detection data - rows:", data_df.shape[0], "columns:", data_df.shape[1])
 
 # Display data information
