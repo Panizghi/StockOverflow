@@ -2,13 +2,10 @@ import pandas as pd
 import numpy as np
 import os
 
-# Set path based on environment
-IS_LOCAL = False
-PATH = "./input/credit-card-fraud-detection" if IS_LOCAL else "./input"
-print(os.listdir(PATH))
+
 
 # Load data
-data_df = pd.read_csv(PATH + "/creditcard.csv")
+data_df = pd.read_csv("https://github.com/nsethi31/Kaggle-Data-Credit-Card-Fraud-Detection/blob/master/creditcard.csv")
 print("Credit Card Fraud Detection data - rows:", data_df.shape[0], "columns:", data_df.shape[1])
 
 # Display data information
