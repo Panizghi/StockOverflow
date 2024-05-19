@@ -9,7 +9,7 @@ from plotly.offline import init_notebook_mode, iplot
 init_notebook_mode(connected=True)
 
 # Load preprocessed data
-data_df = pd.read_csv("https://github.com/nsethi31/Kaggle-Data-Credit-Card-Fraud-Detection/blob/master/creditcard.csv")
+data_df = pd.read_csv("https://raw.githubusercontent.com/nsethi31/Kaggle-Data-Credit-Card-Fraud-Detection/master/creditcard.csv")
 
 # Data analysis
 temp = data_df["Class"].value_counts()
